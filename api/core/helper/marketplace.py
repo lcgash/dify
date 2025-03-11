@@ -16,9 +16,9 @@ def get_plugin_pkg_url(plugin_unique_identifier: str):
 def get_http_proxy_header():
     headers = {}
     if dify_config.MARKETPLACE_HTTP_PROXY:
-        headers["HTTP_PROXY"] = dify_config.HTTP_PROXY
+        headers["HTTP_PROXY"] = dify_config.MARKETPLACE_HTTP_PROXY
     if dify_config.MARKETPLACE_HTTPS_PROXY:
-        headers["HTTPS_PROXY"] = dify_config.HTTPS_PROXY
+        headers["HTTPS_PROXY"] = dify_config.MARKETPLACE_HTTPS_PROXY
     return headers
 
 def download_plugin_pkg(plugin_unique_identifier: str):
