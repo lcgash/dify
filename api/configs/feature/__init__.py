@@ -187,6 +187,16 @@ class MarketplaceConfig(BaseSettings):
         default="https://marketplace.dify.ai",
     )
 
+    MARKETPLACE_HTTP_PROXY: Optional[str] = Field(
+        description="HTTP proxy for marketplace requests",
+        default=None,
+    )
+
+    MARKETPLACE_HTTPS_PROXY: Optional[str] = Field(
+        description="HTTPS proxy for marketplace requests",
+        default=None,
+    )
+
 
 class EndpointConfig(BaseSettings):
     """

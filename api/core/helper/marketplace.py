@@ -13,10 +13,17 @@ def get_plugin_pkg_url(plugin_unique_identifier: str):
         unique_identifier=plugin_unique_identifier
     )
 
+def get_http_proxy_header():
+    headers = {}
+    if dify_config.MARKETPLACE_HTTP_PROXY:
+        headers["HTTP_PROXY"] = dify_config.HTTP_PROXY
+    if dify_config.MARKETPLACE_HTTPS_PROXY:
+        headers["HTTPS_PROXY"] = dify_config.HTTPS_PROXY
+    return headers
 
 def download_plugin_pkg(plugin_unique_identifier: str):
     url = str(get_plugin_pkg_url(plugin_unique_identifier))
-    return download_with_size_limit(url, dify_config.PLUGIN_MAX_PACKAGE_SIZE)
+    return download_with_size_limit(url, dify_config.PLUGIN_MAX_PACKAGE_SIZE, headers=get_http_proxy_header())
 
 
 def batch_fetch_plugin_manifests(plugin_ids: list[str]) -> Sequence[MarketplacePluginDeclaration]:
@@ -24,12 +31,12 @@ def batch_fetch_plugin_manifests(plugin_ids: list[str]) -> Sequence[MarketplaceP
         return []
 
     url = str(URL(str(dify_config.MARKETPLACE_API_URL)) / "api/v1/plugins/batch")
-    response = requests.post(url, json={"plugin_ids": plugin_ids})
+    response = requests.post(url, json={"plugin_ids": plugin_ids}, headers=get_http_proxy_header())
     response.raise_for_status()
     return [MarketplacePluginDeclaration(**plugin) for plugin in response.json()["data"]["plugins"]]
 
 
 def record_install_plugin_event(plugin_unique_identifier: str):
     url = str(URL(str(dify_config.MARKETPLACE_API_URL)) / "api/v1/stats/plugins/install_count")
-    response = requests.post(url, json={"unique_identifier": plugin_unique_identifier})
+    response = requests.post(url, json={"unique_identifier": plugin_unique_identifier}, headers=get_http_proxy_header())
     response.raise_for_status()
